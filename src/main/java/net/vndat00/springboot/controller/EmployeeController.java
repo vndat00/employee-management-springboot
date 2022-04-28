@@ -1,8 +1,10 @@
 package net.vndat00.springboot.controller;
 
+import net.vndat00.springboot.exception.ResourceNotFoundException;
 import net.vndat00.springboot.model.Employee;
 import net.vndat00.springboot.repository.EmployeeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -24,5 +26,13 @@ public class EmployeeController {
     @PostMapping("/employees")
     public Employee createEmployee(@RequestBody Employee employee){
         return employeeRepository.save(employee);
+    }
+
+    // Get employee by id rest api
+    @GetMapping("/employees/{id}")
+    public ResponseEntity<Employee> getEmployeeById(@PathVariable Long  id){
+        Employee employee = employeeRepository.findById(id)
+                .orElseThrow( () -> new ResourceNotFoundException("Employee not exist with id " + id));
+        return ResponseEntity.ok(employee);
     }
 }
